@@ -1,5 +1,7 @@
 import cv2 as cv
 from tkinter import colorchooser
+from pathlib import Path
+from datetime import datetime
 
 from Image_Filtering import Image_Filtering
 from Render_Type import Render_Type
@@ -72,6 +74,9 @@ def render(render_type, eye_cascade, face_cascade):
             if digit == 105:
                 cv.destroyAllWindows()
                 return Render_Type.IMAGE, False
+            # letra G
+            elif digit == 103:
+                cv.imwrite(f"Imagem_{datetime.now()}", frame)
             elif digit == 27:
                 return render_type, True
             elif digit == 110:
@@ -99,10 +104,14 @@ def render(render_type, eye_cascade, face_cascade):
             write_legend(filtered_image)
             cv.imshow(projectname, filtered_image)
             digit = cv.pollKey()
+            print(digit)
             # letra V
             if digit == 118:
                 cv.destroyAllWindows()
                 return Render_Type.CAMERA_VIDEO, False
+            # letra G
+            elif digit == 103:
+                cv.imwrite(f"Imagem_{datetime.now()}.png", filtered_image)
             # ESC
             elif digit == 27:
                 return render_type, True
@@ -128,7 +137,10 @@ def render(render_type, eye_cascade, face_cascade):
 
 
 def get_next(image_path, direction):
-    image_list = ["images/lena.png", "images/carro.jpg", "images/pessoa.jpg", "images/pikachu.jpg"]
+    image_list = []
+    for child in Path('images').iterdir():
+        if child.is_file():
+            image_list.append(f"{child.parent}/{child.name}")
     index = image_list.index(image_path, 0, len(image_list))
     if direction == 0:
         if index == len(image_list) - 1:
@@ -177,11 +189,12 @@ def write_legend(image, is_camera=False):
     cv.putText(image, "N - Filtro Negativo", (0, 25), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
     cv.putText(image, "F - Adicionar filtro de cor", (0, 40), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
     cv.putText(image, "R - Remover sticker", (0, 55), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
+    cv.putText(image, "G - Gravar Imagem", (0, 70), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
     if is_camera:
-        cv.putText(image, "I - Mudar para imagem", (0, 70), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
-        cv.putText(image, "S - \"Stop face Detection\"", (0, 85), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
+        cv.putText(image, "I - Mudar para imagem", (0, 85), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
+        cv.putText(image, "S - \"Stop face Detection\"", (0, 100), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
     else:
-        cv.putText(image, "V - Mudar para camera", (0, 70), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
+        cv.putText(image, "V - Mudar para camera", (0, 85), cv.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 1, cv.LINE_8)
 
 
 def get_user_selected_color():
